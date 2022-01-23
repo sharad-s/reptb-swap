@@ -5,7 +5,7 @@ const SwapPage = () => {
   return (
     <>
       <Head>
-        <title>FeiRari | Swap</title>
+        <title>FeiRari | Swap REPT-B</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Swap />

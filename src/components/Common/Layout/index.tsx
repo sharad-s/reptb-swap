@@ -47,7 +47,6 @@ const Layout = ({ children }) => {
       >
         {children}
       </Flex>
-      <Particles />
     </Flex>
   );
 };

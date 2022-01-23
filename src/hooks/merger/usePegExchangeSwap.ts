@@ -1,9 +1,14 @@
 import useContract from "../useContract";
 import PEG_EXCHANGER_ABI from "../../../contracts/PegExchanger.json";
+import REPTB_ABI from "../../../contracts/REPTBExchanger.json";
 import ERC20_ABI from "../../../contracts/ERC20.json";
-import { ERC20, PegExchanger } from "../../../contracts/types";
+import { ERC20, PegExchanger, REPTBExchanger } from "../../../contracts/types";
 import { BigNumber, constants, Contract } from "ethers";
-import { PEG_EXCHANGER_ADDRESS, TOKEN_ADDRESSES } from "../../constants";
+import {
+  PEG_EXCHANGER_ADDRESS,
+  REPTB_ADDRESS,
+  TOKEN_ADDRESSES,
+} from "../../constants";
 import { useCallback, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { useToast } from "@chakra-ui/react";
@@ -15,14 +20,14 @@ export const usePegExchangeSwap = () => {
   const { account } = useWeb3React();
   const toast = useToast();
 
-  const exchangeContract: PegExchanger = useContract(
-    PEG_EXCHANGER_ADDRESS,
-    PEG_EXCHANGER_ABI
+  const exchangeContract: REPTBExchanger = useContract(
+    REPTB_ADDRESS,
+    REPTB_ABI
   );
 
-  const exchangeRate = usePegExchangeRate()
+  const exchangeRate = usePegExchangeRate();
 
-  const rgtContract: ERC20 = useContract(TOKEN_ADDRESSES.RGT, ERC20_ABI);
+  const rgtContract: ERC20 = useContract(TOKEN_ADDRESSES.REPTB, ERC20_ABI);
 
   const [swapStep, setSwapStep] = useState<
     "APPROVING" | "SWAPPING" | "LOADING" | undefined
@@ -40,8 +45,13 @@ export const usePegExchangeSwap = () => {
         .then(() => {
           setSwapStep(undefined);
           toast({
-            title: `Exchanged ${parseFloat(formatEther(amountBN)).toFixed(4)} RGT!`,
-            description: `For ${formatUnits(amountBN.mul(exchangeRate), 27)} TRIBE`,
+            title: `Exchanged ${parseFloat(formatEther(amountBN)).toFixed(
+              4
+            )} RGT!`,
+            description: `For ${formatUnits(
+              amountBN.mul(exchangeRate),
+              27
+            )} TRIBE`,
             status: "success",
             duration: 9000,
             isClosable: true,
@@ -61,7 +71,7 @@ export const usePegExchangeSwap = () => {
 
 // Checks allowance and exchanges RGT for Fei
 export const swapRGTForFei = async (
-  exchangeContract: PegExchanger,
+  exchangeContract: REPTBExchanger,
   rgtContract: ERC20,
   amountBN: BigNumber,
   account: string,
@@ -72,7 +82,7 @@ export const swapRGTForFei = async (
   // Token
   const allowance = await rgtContract.callStatic.allowance(
     account,
-    PEG_EXCHANGER_ADDRESS
+    REPTB_ADDRESS
   );
 
   console.log({
@@ -90,7 +100,7 @@ export const swapRGTForFei = async (
   }
 
   setStep("SWAPPING");
-  const tx = await exchangeContract.exchange(amountBN);
+  const tx = await exchangeContract.exchange(account, amountBN);
   await tx.wait(1);
 
   setStep(undefined);

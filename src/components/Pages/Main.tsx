@@ -21,10 +21,8 @@ import { useTokenData } from "hooks/useTokenData";
 import { useMemo, useState } from "react";
 import { SWRResponse } from "swr";
 
-import { usePegExchangeRate } from "hooks/merger/usePegExchangeRate";
 import { usePegExchangeSwap } from "hooks/merger/usePegExchangeSwap";
 import { TOKEN_ADDRESSES } from "../../constants";
-import { chakra } from "@chakra-ui/system";
 const Swap = () => {
   const { account } = useWeb3React();
 
@@ -41,7 +39,7 @@ const Swap = () => {
 
   const [rgtInput, setRgtInput] = useState("");
 
-  const exchangeRate = usePegExchangeRate();
+  const exchangeRate = BigNumber.from(1)
   const { swap, swapStep } = usePegExchangeSwap();
 
   const tribeReceived = useMemo(() => {

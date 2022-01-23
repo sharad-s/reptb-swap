@@ -29,25 +29,25 @@ const Swap = () => {
   const { account } = useWeb3React();
 
   const { data: rgtBalance, mutate }: SWRResponse<BigNumber, Error> =
-    useTokenBalance(account, TOKEN_ADDRESSES.RGT);
+    useTokenBalance(account, TOKEN_ADDRESSES.REPTB);
 
   const { data: tribeBalance }: SWRResponse<BigNumber, Error> = useTokenBalance(
     account,
-    TOKEN_ADDRESSES.TRIBE
+    TOKEN_ADDRESSES.FEI
   );
 
-  const rgt = useTokenData(TOKEN_ADDRESSES.RGT);
-  const tribe = useTokenData(TOKEN_ADDRESSES.TRIBE);
+  const reptb = useTokenData(TOKEN_ADDRESSES.REPTB);
+  const tribe = useTokenData(TOKEN_ADDRESSES.FEI);
 
   const [rgtInput, setRgtInput] = useState("");
 
-  const exchangeRate = usePegExchangeRate();
+  const exchangeRate = 1
+  console.log({ exchangeRate });
   const { swap, swapStep } = usePegExchangeSwap();
 
   const tribeReceived = useMemo(() => {
     if (!rgtInput || !exchangeRate) return "0";
-
-    return formatUnits(parseEther(rgtInput).mul(exchangeRate), 27);
+    return formatEther(parseEther(rgtInput).mul(1))
   }, [rgtInput, exchangeRate]);
 
 
@@ -66,7 +66,7 @@ const Swap = () => {
 
   const error = useMemo(() => {
     if (!rgtBalance) {
-      return "You have no RGT";
+      return "You have no REPT-B";
     }
 
     if (!rgtInput) {
@@ -80,7 +80,7 @@ const Swap = () => {
     // });
 
     if (parseEther(rgtInput).gt(rgtBalance)) {
-      return "You don't have enough RGT";
+      return "You don't have enough REPT-B";
     }
     // if (maxRageQuittableAmount.isZero()) {
     //   return "Ineligible for Ragequit";
@@ -124,21 +124,20 @@ const Swap = () => {
           px={{ base: 5, sm: 10 }}
           py={5}
           my="auto"
-          mx="auto"
-          // bgGradient="linear-gradient(90deg, rgba(5,53,181,1) 0%, rgba(23,141,207,1) 100%)"
+          mx="auto" r
+        // bgGradient="linear-gradient(90deg, rgba(5,53,181,1) 0%, rgba(23,141,207,1) 100%)"
         >
-          <Heading> Swap RGT for TRIBE </Heading>
+          <Heading> Swap REPT-B for FEI </Heading>
 
           <HStack w="100%" align="start" justify="start" my={1}>
             <VStack align="start" bg="" my={4}>
               <Text>You have:</Text>
               <HStack>
-                <Avatar h="100%" boxSize="15px" src={rgt?.logoURL} />
                 <Text fontWeight="bold">
                   {parseFloat(
                     formatEther(rgtBalance ?? BigNumber.from(0))
-                  ).toFixed(5)}{" "}
-                  RGT
+                  ).toFixed(18)}{" "}
+                  REPT-B
                 </Text>
               </HStack>
             </VStack>
@@ -158,7 +157,7 @@ const Swap = () => {
                 fontWeight="bold"
                 bg="white"
                 color="black"
-                placeholder="RGT to swap"
+                placeholder="REPT-B to swap"
                 _placeholder={{
                   fontWeight: "bold",
                 }}
@@ -191,10 +190,6 @@ const Swap = () => {
                     >
                       <Text fontSize="sm"> Max </Text>
                     </Button>
-                    <HStack>
-                      <Avatar h="100%" boxSize="15px" src={rgt?.logoURL} />
-                      <Text>RGT</Text>
-                    </HStack>
                   </HStack>
                 }
               />
@@ -210,8 +205,8 @@ const Swap = () => {
               <Input
                 w="100%"
                 size="lg"
-                value={parseFloat(tribeReceived).toFixed(5)}
-                placeholder="TRIBE recieved"
+                value={parseFloat(tribeReceived).toFixed(18)}
+                placeholder="FEI recieved"
                 disabled
                 bg="white"
                 color="grey"
@@ -233,7 +228,7 @@ const Swap = () => {
                     color="#178DCF"
                   >
                     <Avatar h="100%" boxSize="15px" src={tribe?.logoURL} />
-                    <Text>TRIBE</Text>
+                    <Text>FEI</Text>
                   </HStack>
                 }
               />
@@ -252,7 +247,7 @@ const Swap = () => {
             {!!error ? (
               error
             ) : swapStep === "APPROVING" ? (
-              "Approving RGT..."
+              "Approving REPT-B..."
             ) : swapStep === "SWAPPING" ? (
               <HStack h="100%">
                 <Image
@@ -276,7 +271,7 @@ const Swap = () => {
         bg=""
       >
         <Image
-          src="/static/peepo_gifty.png"
+          src="https://pbs.twimg.com/media/Ed2QkqsWkAMzlzQ?format=png&name=900x900"
           w={{ base: "90%", sm: "70%" }}
           h="auto"
           mx="auto"
